@@ -1,5 +1,7 @@
 #pragma once
 #include "BaseGame.h"
+#include "LevelManager.h"
+#include "Player.h"
 class Game : public BaseGame
 {
 public:
@@ -22,7 +24,9 @@ public:
 	void ProcessMouseUpEvent( const SDL_MouseButtonEvent& e ) override;
 
 private:
-
+	//MEMBERS
+	LevelManager* m_pLevelManager{ new LevelManager{GetViewPort().width, GetViewPort().height}};
+	Player* m_pPlayer{ new Player{} };
 	// FUNCTIONS
 	void Initialize();
 	void Cleanup( );
