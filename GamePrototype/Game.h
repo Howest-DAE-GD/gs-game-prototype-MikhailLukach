@@ -2,6 +2,7 @@
 #include "BaseGame.h"
 #include "LevelManager.h"
 #include "Player.h"
+#include "F.h"
 class Game : public BaseGame
 {
 public:
@@ -26,7 +27,7 @@ public:
 private:
 	//MEMBERS
 	LevelManager* m_pLevelManager{ new LevelManager{GetViewPort().width, GetViewPort().height}};
-	Player* m_pPlayer{ new Player{} };
+	Player* m_pPlayer;
 	// FUNCTIONS
 	void Initialize();
 	void Cleanup( );

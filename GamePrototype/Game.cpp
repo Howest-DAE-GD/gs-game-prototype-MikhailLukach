@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Game.h"
+#include "utils.h"
 
 Game::Game( const Window& window ) 
 	:BaseGame{ window }
@@ -14,7 +15,8 @@ Game::~Game( )
 
 void Game::Initialize( )
 {
-	
+	m_pPlayer = new Player{ Point2f(100.f, 100.f), m_pLevelManager };
+	m_pLevelManager->AddFrends(Point2f(400.f, 100.f), Color4f(1.f, 0.f, 0.f, 1.f));
 }
 
 void Game::Cleanup( )
@@ -23,6 +25,10 @@ void Game::Cleanup( )
 
 void Game::Update( float elapsedSec )
 {
+	const Uint8* pStates = SDL_GetKeyboardState(nullptr);
+	m_pLevelManager->UpdateCollisionFrends(m_pLevelManager->ReturnGroundVertices(), elapsedSec);
+	m_pPlayer->UpdateCollisions(m_pLevelManager->ReturnGroundVertices(), elapsedSec);
+	m_pPlayer->HandleMovement(elapsedSec, pStates);
 	// Check keyboard state
 	//const Uint8 *pStates = SDL_GetKeyboardState( nullptr );
 	//if ( pStates[SDL_SCANCODE_RIGHT] )
@@ -39,6 +45,13 @@ void Game::Draw( ) const
 {
 	ClearBackground();
 	m_pLevelManager->DrawLevel();
+	utils::SetColor(Color4f(1.f, 0.f, 0.f, 1.f));
+	for(int idx{0}; idx < m_pLevelManager->ReturnGroundVertices().size(); idx++)
+	{
+		utils::DrawPolygon(m_pLevelManager->ReturnGroundVertices()[idx], true, 2.f);
+	}
+	m_pLevelManager->DrawFrends();
+	m_pPlayer->Draw();
 }
 
 void Game::ProcessKeyDownEvent( const SDL_KeyboardEvent & e )
