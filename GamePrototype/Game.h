@@ -23,11 +23,13 @@ public:
 	void ProcessMouseMotionEvent( const SDL_MouseMotionEvent& e ) override;
 	void ProcessMouseDownEvent( const SDL_MouseButtonEvent& e ) override;
 	void ProcessMouseUpEvent( const SDL_MouseButtonEvent& e ) override;
+	void SetCurrentLevel(int level);
 
 private:
 	//MEMBERS
-	LevelManager* m_pLevelManager{ new LevelManager{GetViewPort().width, GetViewPort().height}};
 	Player* m_pPlayer;
+	LevelManager* m_pLevelManager{ new LevelManager{GetViewPort().width, GetViewPort().height, this}};
+	int m_CurrentLevel{ 1 };
 	// FUNCTIONS
 	void Initialize();
 	void Cleanup( );
