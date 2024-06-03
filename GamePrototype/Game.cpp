@@ -65,15 +65,7 @@ void Game::Draw( ) const
 	m_pLevelManager->DrawHints();
 	m_pLevelManager->DrawLevel();
 	m_pLevelManager->DrawDoor();
-	utils::SetColor(Color4f(1.f, 0.f, 0.f, 1.f));
-	for(int idx{0}; idx < m_pLevelManager->ReturnGroundVertices().size(); idx++)
-	{
-		utils::DrawPolygon(m_pLevelManager->ReturnGroundVertices()[idx], true, 2.f);
-	}
-	for (int idx{ 0 }; idx < m_pLevelManager->ReturnFloatingPlatformVertices().size(); idx++)
-	{
-		utils::DrawPolygon(m_pLevelManager->ReturnFloatingPlatformVertices()[idx], true, 2.f);
-	}
+
 	m_pLevelManager->DrawFrends();
 	m_pPlayer->Draw();
 }

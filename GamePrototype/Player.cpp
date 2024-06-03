@@ -68,17 +68,8 @@ void Player::HandleMovement(float elapsedSec, const Uint8* pStates)
 		{
 			m_IsConnected1 = false;
 			m_IsAlreadyConencted1 = false;
+			m_ConnectedFriend1->SetConnectedState(false);
 			m_ConnectedFriend1 = nullptr;
-		}
-		if(m_IsPickUp != false)
-		{
-			if(m_PickedUpGift != nullptr)
-			{
-				m_PickedUpGift->SetGravity(true);
-			}
-			m_IsPickUp = false;
-			m_IsAlreadyPickedUp = false;
-			m_PickedUpGift = nullptr;
 		}
 	}
 	if(pStates[SDL_SCANCODE_X])
@@ -122,6 +113,7 @@ void Player::HandleMovement(float elapsedSec, const Uint8* pStates)
 			}
 			m_IsPickUp = false;
 			m_IsAlreadyPickedUp = false;
+			m_PickedUpGift->SetPickUp(false);
 			m_PickedUpGift = nullptr;
 		}
 	}
@@ -141,46 +133,34 @@ void Player::UpdateCollisions(const std::vector<std::vector<Point2f>>& vertices,
 	utils::HitInfo resultsRightSide;
 	for (int idx{ 0 }; idx < vertices.size(); idx++)
 	{
-		if (m_IsGrounded == true && m_PlayerSpeed.y < 0)
+		if (m_IsGrounded == true )
 		{
-			if (m_LookingLeft == false)
+			if (utils::Raycast(vertices[idx], LeftTopStart, LeftBottomEnd, resultsLeft))
 			{
-				if (utils::Raycast(vertices[idx], LeftTopStart, LeftBottomEnd, resultsLeft))
-				{
-					m_PlayerSpeed.y = 0.f;
-					m_PositionPlayer.y = resultsLeft.intersectPoint.y + 1.f;
-					m_IsGrounded = true;
-				}
+				m_PlayerSpeed.y = 0.f;
+				m_PositionPlayer.y = resultsLeft.intersectPoint.y + 1.f;
+				m_IsGrounded = true;
 			}
-			else
+			else if (utils::Raycast(vertices[idx], RightTopStart, RightBottomEnd, resultsRight))
 			{
-				if (utils::Raycast(vertices[idx], RightTopStart, RightBottomEnd, resultsRight))
-				{
-					m_PlayerSpeed.y = 0.f;
-					m_PositionPlayer.y = resultsRight.intersectPoint.y + 1.f;
-					m_IsGrounded = true;
-				}
+				m_PlayerSpeed.y = 0.f;
+				m_PositionPlayer.y = resultsRight.intersectPoint.y + 1.f;
+				m_IsGrounded = true;
 			}
 		}
 		else if(m_IsGrounded == false && m_PlayerSpeed.y < 0)
 		{
-			if (m_LookingLeft == false)
+			if (utils::Raycast(vertices[idx], LeftTopStart, LeftBottomEnd, resultsLeft))
 			{
-				if (utils::Raycast(vertices[idx], LeftTopStart, LeftBottomEnd, resultsLeft))
-				{
-					m_PlayerSpeed.y = 0.f;
-					m_PositionPlayer.y = resultsLeft.intersectPoint.y;
-					m_IsGrounded = true;
-				}
+				m_PlayerSpeed.y = 0.f;
+				m_PositionPlayer.y = resultsLeft.intersectPoint.y + 1.f;
+				m_IsGrounded = true;
 			}
-			else
+			else if (utils::Raycast(vertices[idx], RightTopStart, RightBottomEnd, resultsRight))
 			{
-				if (utils::Raycast(vertices[idx], RightTopStart, RightBottomEnd, resultsRight))
-				{
-					m_PlayerSpeed.y = 0.f;
-					m_PositionPlayer.y = resultsRight.intersectPoint.y;
-					m_IsGrounded = true;
-				}
+				m_PlayerSpeed.y = 0.f;
+				m_PositionPlayer.y = resultsRight.intersectPoint.y + 1.f;
+				m_IsGrounded = true;
 			}
 		}
 	}
@@ -252,12 +232,14 @@ void Player::UpdateCollisions(const std::vector<std::vector<Point2f>>& vertices,
 			m_LevelManager->ReturnFrendsArray()[m_Connected1Index]->SetFrendPosition(Point2f(m_PositionPlayer.x + 50.f, m_PositionPlayer.y));
 			m_ConnectedFriend1 = m_LevelManager->ReturnFrendsArray()[m_Connected1Index];
 			m_Connected1Index = m_Connected1Index;
+			m_ConnectedFriend1->SetConnectedState(true);
 		}
 		else if (utils::IsOverlapping(playerRect, m_LevelManager->ReturnFrendsArray()[m_Connected1Index]->ReturnFrendTriggerBoxRight()) == true)
 		{
 			m_LevelManager->ReturnFrendsArray()[m_Connected1Index]->SetFrendPosition(Point2f(m_PositionPlayer.x - 50.f, m_PositionPlayer.y));
 			m_ConnectedFriend1 = m_LevelManager->ReturnFrendsArray()[m_Connected1Index];
 			m_Connected1Index = m_Connected1Index;
+			m_ConnectedFriend1->SetConnectedState(true);
 		}
 	}
 }
@@ -310,6 +292,7 @@ void Player::UpdateCollisionsGift(float elapsedSec)
 					m_PickedUpGift = m_LevelManager->ReturnGiftArray()[idx];
 					m_PickedUpIndex = idx;
 					m_LevelManager->ReturnGiftArray()[m_PickedUpIndex]->SetGravity(false);
+					m_PickedUpGift->SetPickUp(true);
 					m_IsAlreadyPickedUp = true;
 				}
 				else if (utils::IsOverlapping(playerRect, m_LevelManager->ReturnGiftArray()[idx]->ReturnObjectTriggerBoxRight()) == true)
@@ -318,6 +301,7 @@ void Player::UpdateCollisionsGift(float elapsedSec)
 					m_PickedUpGift = m_LevelManager->ReturnGiftArray()[idx];
 					m_PickedUpIndex = idx;
 					m_LevelManager->ReturnGiftArray()[m_PickedUpIndex]->SetGravity(false);
+					m_PickedUpGift->SetPickUp(true);
 					m_IsAlreadyPickedUp = true;
 				}
 			}
@@ -332,6 +316,7 @@ void Player::UpdateCollisionsGift(float elapsedSec)
 				m_LevelManager->ReturnGiftArray()[m_PickedUpIndex]->SetGiftPosition(Point2f(m_PositionPlayer.x + 15.f, m_PositionPlayer.y + 55.f));
 				m_PickedUpGift = m_LevelManager->ReturnGiftArray()[m_PickedUpIndex];
 				m_LevelManager->ReturnGiftArray()[m_PickedUpIndex]->SetGravity(false);
+				m_PickedUpGift->SetPickUp(true);
 				m_PickedUpIndex = m_PickedUpIndex;
 			}
 			else if (utils::IsOverlapping(playerRect, m_LevelManager->ReturnGiftArray()[m_PickedUpIndex]->ReturnObjectTriggerBoxRight()) == true)
@@ -339,6 +324,7 @@ void Player::UpdateCollisionsGift(float elapsedSec)
 				m_LevelManager->ReturnGiftArray()[m_PickedUpIndex]->SetGiftPosition(Point2f(m_PositionPlayer.x - 15.f, m_PositionPlayer.y + 55.f));
 				m_PickedUpGift = m_LevelManager->ReturnGiftArray()[m_PickedUpIndex];
 				m_LevelManager->ReturnGiftArray()[m_PickedUpIndex]->SetGravity(false);
+				m_PickedUpGift->SetPickUp(true);
 				m_PickedUpIndex = m_PickedUpIndex;
 			}
 		}

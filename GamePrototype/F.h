@@ -16,6 +16,7 @@ public:
 	Color4f ReturnFrendColour() const;
 	Color4f ReturnFrendReqColour() const;
 	void SetAppeasedState(bool isAppeased);
+	void SetConnectedState(bool isConnected);
 	void SetFrendPosition(const Point2f& newPos);
 	void ReduceFrendYPosition(const float reduc);
 	void TurnInvisible();
@@ -37,5 +38,6 @@ private:
 	float m_FrendVelocityY{ 0.f };
 	bool m_IsInvisible{ false };
 	bool m_IsAppeased{ true };
+	bool m_IsConnected{ false };
 };
 

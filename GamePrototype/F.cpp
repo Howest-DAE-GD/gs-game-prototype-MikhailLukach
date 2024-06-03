@@ -74,26 +74,29 @@ void F::Draw() const
 
 void F::UpdateCollisions(const std::vector<std::vector<Point2f>>& vertices, float elapsedSec)
 {
-	const float gravity{ -9.81f };
-	m_PositionFrend.y += m_FrendVelocityY * elapsedSec;
-	m_FrendVelocityY += gravity;
-	Point2f LeftTopStart{ Point2f(m_PositionFrend.x, m_PositionFrend.y + m_FrendMeasurement) };
-	Point2f LeftBottomEnd{ Point2f(m_PositionFrend.x, m_PositionFrend.y - 1) };
-	Point2f RightTopStart{ Point2f(m_PositionFrend.x + m_FrendMeasurement, m_PositionFrend.y + m_FrendMeasurement) };
-	Point2f RightBottomEnd{ Point2f(m_PositionFrend.x + m_FrendMeasurement, m_PositionFrend.y - 1) };
-	utils::HitInfo resultsRight;
-	utils::HitInfo resultsLeft;
-	for (int idx{ 0 }; idx < vertices.size(); idx++)
+	if(m_IsConnected != true)
 	{
-		if (utils::Raycast(vertices[idx], LeftTopStart, LeftBottomEnd, resultsLeft))
+		const float gravity{ -9.81f };
+		m_PositionFrend.y += m_FrendVelocityY * elapsedSec;
+		m_FrendVelocityY += gravity;
+		Point2f LeftTopStart{ Point2f(m_PositionFrend.x, m_PositionFrend.y + m_FrendMeasurement) };
+		Point2f LeftBottomEnd{ Point2f(m_PositionFrend.x, m_PositionFrend.y - 1) };
+		Point2f RightTopStart{ Point2f(m_PositionFrend.x + m_FrendMeasurement, m_PositionFrend.y + m_FrendMeasurement) };
+		Point2f RightBottomEnd{ Point2f(m_PositionFrend.x + m_FrendMeasurement, m_PositionFrend.y - 1) };
+		utils::HitInfo resultsRight;
+		utils::HitInfo resultsLeft;
+		for (int idx{ 0 }; idx < vertices.size(); idx++)
 		{
-			m_FrendVelocityY = 0.f;
-			m_PositionFrend.y = resultsLeft.intersectPoint.y + 1.f;
-		}
-		else if (utils::Raycast(vertices[idx], RightTopStart, RightBottomEnd, resultsRight))
-		{
-			m_FrendVelocityY = 0.f;
-			m_PositionFrend.y = resultsLeft.intersectPoint.y + 1.f;
+			if (utils::Raycast(vertices[idx], LeftTopStart, LeftBottomEnd, resultsLeft))
+			{
+				m_FrendVelocityY = 0.f;
+				m_PositionFrend.y = resultsLeft.intersectPoint.y + 1.f;
+			}
+			else if (utils::Raycast(vertices[idx], RightTopStart, RightBottomEnd, resultsRight))
+			{
+				m_FrendVelocityY = 0.f;
+				m_PositionFrend.y = resultsLeft.intersectPoint.y + 1.f;
+			}
 		}
 	}
 	m_FrendTriggerBoxLeft = Rectf(m_PositionFrend.x - 50.f, m_PositionFrend.y, 50.f, 50.f);
@@ -133,6 +136,11 @@ Color4f F::ReturnFrendReqColour() const
 void F::SetAppeasedState(bool isAppeased)
 {
 	m_IsAppeased = isAppeased;
+}
+
+void F::SetConnectedState(bool isConnected)
+{
+	m_IsConnected = isConnected;
 }
 
 void F::SetFrendPosition(const Point2f& newPos)

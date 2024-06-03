@@ -489,6 +489,22 @@ void LevelManager::DrawHints() const
 		m_pText11->Draw(Point2f(5.f, 475.f));
 		m_pText12->Draw(Point2f(5.f, 450.f));
 	}
+	else if (m_CurrentLevel == 4)
+	{
+		m_pText2->Draw(Point2f(5.f, 475.f));
+		m_pText4->Draw(Point2f(5.f, 450.f));
+		m_pText9->Draw(Point2f(5.f, 425.f));
+		m_pText11->Draw(Point2f(5.f, 400.f));
+		m_pText12->Draw(Point2f(5.f, 375.f));
+	}
+	else if (m_CurrentLevel == 5)
+	{
+		m_pText2->Draw(Point2f(5.f, 475.f));
+		m_pText4->Draw(Point2f(5.f, 450.f));
+		m_pText9->Draw(Point2f(5.f, 425.f));
+		m_pText11->Draw(Point2f(5.f, 400.f));
+		m_pText12->Draw(Point2f(5.f, 375.f));
+	}
 }
 
 void LevelManager::RemoveGift(int index)

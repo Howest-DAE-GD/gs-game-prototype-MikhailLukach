@@ -16,6 +16,7 @@ public:
 	void UpdateCollisions(const std::vector<std::vector<Point2f>>& vertices, float elapsedSec);
 	void SetGiftPosition(const Point2f& newPos);
 	void SetGravity(bool setGravity);
+	void SetPickUp(bool isPickedUp);
 	void ApplyColour(const Color4f& newColour);
 	bool CheckTypeCorrelates(Type type);
 	Rectf ReturnObjectTriggerBoxLeft() const;
@@ -31,5 +32,6 @@ private:
 	const float m_ObjectMeasurement{ 15.f };
 	float m_ObjectVelocityY{ 0.f };
 	bool m_ApplyGravity{ true };
+	bool m_IsPickedUp{ false };
 };
 

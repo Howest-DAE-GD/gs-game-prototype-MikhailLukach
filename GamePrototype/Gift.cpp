@@ -35,29 +35,32 @@ void Gift::Draw() const
 
 void Gift::UpdateCollisions(const std::vector<std::vector<Point2f>>& vertices, float elapsedSec)
 {
-	if(m_ApplyGravity == true)
+	if(m_IsPickedUp != true)
 	{
-		const float gravity{ -9.81f };
-		m_PositionObject.y += m_ObjectVelocityY * elapsedSec;
-		m_ObjectVelocityY += gravity;
-	}
-	Point2f LeftTopStart{ Point2f(m_PositionObject.x, m_PositionObject.y + m_ObjectMeasurement) };
-	Point2f LeftBottomEnd{ Point2f(m_PositionObject.x, m_PositionObject.y - 1) };
-	Point2f RightTopStart{ Point2f(m_PositionObject.x + m_ObjectMeasurement, m_PositionObject.y + m_ObjectMeasurement) };
-	Point2f RightBottomEnd{ Point2f(m_PositionObject.x + m_ObjectMeasurement, m_PositionObject.y - 1) };
-	utils::HitInfo resultsRight;
-	utils::HitInfo resultsLeft;
-	for (int idx{ 0 }; idx < vertices.size(); idx++)
-	{
-		if (utils::Raycast(vertices[idx], LeftTopStart, LeftBottomEnd, resultsLeft))
+		if (m_ApplyGravity == true)
 		{
-			m_ObjectVelocityY = 0.f;
-			m_PositionObject.y = resultsLeft.intersectPoint.y + 1.f;
+			const float gravity{ -9.81f };
+			m_PositionObject.y += m_ObjectVelocityY * elapsedSec;
+			m_ObjectVelocityY += gravity;
 		}
-		else if (utils::Raycast(vertices[idx], RightTopStart, RightBottomEnd, resultsRight))
+		Point2f LeftTopStart{ Point2f(m_PositionObject.x, m_PositionObject.y + m_ObjectMeasurement) };
+		Point2f LeftBottomEnd{ Point2f(m_PositionObject.x, m_PositionObject.y - 1) };
+		Point2f RightTopStart{ Point2f(m_PositionObject.x + m_ObjectMeasurement, m_PositionObject.y + m_ObjectMeasurement) };
+		Point2f RightBottomEnd{ Point2f(m_PositionObject.x + m_ObjectMeasurement, m_PositionObject.y - 1) };
+		utils::HitInfo resultsRight;
+		utils::HitInfo resultsLeft;
+		for (int idx{ 0 }; idx < vertices.size(); idx++)
 		{
-			m_ObjectVelocityY = 0.f;
-			m_PositionObject.y = resultsLeft.intersectPoint.y + 1.f;
+			if (utils::Raycast(vertices[idx], LeftTopStart, LeftBottomEnd, resultsLeft))
+			{
+				m_ObjectVelocityY = 0.f;
+				m_PositionObject.y = resultsLeft.intersectPoint.y + 1.f;
+			}
+			else if (utils::Raycast(vertices[idx], RightTopStart, RightBottomEnd, resultsRight))
+			{
+				m_ObjectVelocityY = 0.f;
+				m_PositionObject.y = resultsLeft.intersectPoint.y + 1.f;
+			}
 		}
 	}
 	m_ObjectTriggerBoxLeft = Rectf(m_PositionObject.x - 25.f, m_PositionObject.y - 25.f, 50.f, 100.f);
@@ -72,6 +75,11 @@ void Gift::SetGiftPosition(const Point2f& newPos)
 void Gift::SetGravity(bool setGravity)
 {
 	m_ApplyGravity = setGravity;
+}
+
+void Gift::SetPickUp(bool isPickedUp)
+{
+	m_IsPickedUp = isPickedUp;
 }
 
 void Gift::ApplyColour(const Color4f& newColour)
